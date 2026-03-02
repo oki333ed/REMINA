@@ -79,6 +79,10 @@ class $modify(LoadingLayerExt, LoadingLayer) {
 		CCFileUtils::get()->m_fullPathCache["shop4.mp3"] = walls;
 		CCFileUtils::get()->m_fullPathCache["shop5.mp3"] = walls;
 
+	    CCFileUtils::get()->m_fullPathCache["StayInsideMe.mp3"] = CCFileUtils::get()->fullPathForFilename(
+			"menuLoop/10008531..mp3", 0
+		);
+
 		return true;
 	}
 };
