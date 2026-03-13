@@ -63,7 +63,13 @@
 			"name": "leave labels alone you dumb bitch",
 			"description": "she will see and stop breaking the labels. what is she even trying to say?",
 			"type": "bool",
-			"default": true
+			"default": false
+		},
+		"past": {
+			"name": "past",
+			"description": "things was better then ya?",
+			"type": "bool",
+			"default": false
 		}
 	}
 }
