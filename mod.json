@@ -58,6 +58,12 @@
 			"description": "add sounds to buttons that don't have them",
 			"type": "bool",
 			"default": true
+		},
+		"leave labels alone you dumb bitch": {
+			"name": "leave labels alone you dumb bitch",
+			"description": "she will see and stop breaking the labels. what is she even trying to say?",
+			"type": "bool",
+			"default": true
 		}
 	}
 }
