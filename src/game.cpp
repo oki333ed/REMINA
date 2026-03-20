@@ -270,6 +270,68 @@ inline void SetupObjects() {
 			}
 		)->registerMe();
 
+#include <thread>
+#include <Geode/utils/web.hpp>
+
+static GameObjectsFactory::GameObjectConfig* webtrigger =
+GameObjectsFactory::createTriggerConfig(
+    UNIQ_ID("web-request-trigger"),
+    "edit_eItemCompBtn_001.png",
+
+    [](EffectGameObject* object, GJBaseGameLayer* game, int, gd::vector<int> const*) {
+        if (!object || !game) return;
+
+        auto data = typeinfo_cast<CCNode*>(object->getUserObject("data"_spr));
+        if (!data) return;
+
+        std::string str = data->getID();
+        if (str.empty()) return;
+
+        auto split = string::split(str, "|");
+        if (split.size() < 5) return;
+
+        std::string url = split[0];
+        std::string params = split[1];
+        std::string ua = split[2];
+        std::string method = split[3];
+        std::string contains = split[4];
+
+        std::thread([=]() {
+            using namespace geode::utils::web;
+
+            Request req;
+
+            if (method == "POST") {
+                req = Request::post(url);
+                req.body(params);
+            } else {
+                req = Request::get(url + "?" + params);
+            }
+
+            req.header("User-Agent", ua);
+
+            auto res = req.send().unwrapOrDefault();
+
+            if (!res || !res->ok()) return;
+
+            std::string body = res->string().unwrapOrDefault();
+
+            log::debug("WEB RESPONSE: {}", body);
+
+            if (string::contains(body, contains)) {
+                queueInMainThread([=]() {
+                    if (!object || !game) return;
+
+                    object->m_activateGroup = true;
+
+                    object->m_objectID = webtrigger->m_refObjectID;
+                    object->triggerObject(game, 0, nullptr);
+                    object->m_objectID = webtrigger->m_objectID;
+                });
+            }
+        }).detach();
+    }
+)->refID(1050)->registerMe();
 	GameObjectsFactory::createObjectConfig(UNIQ_ID("player2-model"), "player2-model.png")
 		->tab(6)->resetObject(
 			[](GameObject* a) {
